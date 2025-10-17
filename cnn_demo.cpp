@@ -36,11 +36,11 @@ int main()
     
     std::cout << "\nConvoluting each layer using filters...\n";
     std::vector<std::vector<std::vector<double>>> convolvedLayers = CNN::convolve(drawing);
-    std::cout << "\nConvoluted Layer 1 (7x7):\n";
+    std::cout << "\nConvolved Layer 1 (7x7):\n";
     Util::print_2Dvector(convolvedLayers[0]);
-    std::cout << "\nConvoluted Layer 2 (7x7):\n";
+    std::cout << "\nConvolved Layer 2 (7x7):\n";
     Util::print_2Dvector(convolvedLayers[1]);
-    std::cout << "\nConvoluted Layer 3 (7x7):\n";
+    std::cout << "\nConvolved Layer 3 (7x7):\n";
     Util::print_2Dvector(convolvedLayers[2]);
 
     for (int i = 0; i < 3; ++i)
