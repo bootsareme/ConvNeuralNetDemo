@@ -11,4 +11,4 @@ $ ./a.out
 ```
 
 ## Inner Workings
-<img width="566" height="200" alt="Untitled drawing" src="https://github.com/user-attachments/assets/47bd4c3b-7bb7-4c0d-8f5f-9ae85e944729" />
+<img width="680" height="220" alt="image" src="https://github.com/user-attachments/assets/ee84ce83-db5d-4857-8813-b5d38c8f2e6d" />
