@@ -64,7 +64,7 @@ int main()
     Util::print_2Dvector(pooledLayers[2]);
     
     std::cout << "\nConverting 3 layers into 1 layer...\n";
-    std::cout << "\nFeed-forward network layer (48x1):\n";
+    std::cout << "\nFeed-forward network layer (1x48):\n";
     std::vector<double> singleLayer;
 
     for (const auto& layer : pooledLayers)
