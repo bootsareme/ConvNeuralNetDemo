@@ -11,4 +11,4 @@ $ ./a.out
 ```
 
 ## Inner Workings
-to be completed...
+<img width="566" height="200" alt="Untitled drawing" src="https://github.com/user-attachments/assets/47bd4c3b-7bb7-4c0d-8f5f-9ae85e944729" />
