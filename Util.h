@@ -27,7 +27,7 @@ namespace Util
     /// </summary>
     ///     <param name="file"> name of the file </param>
     ///     <returns> 2D vector of machine-readable format of image </returns>
-    std::vector<std::vector<int>> parse_file(const char* file)
+    inline std::vector<std::vector<int>> parse_file(const char* file)
     {
         std::ifstream input(file);
         std::vector<std::vector<int>> singleDrawing;
