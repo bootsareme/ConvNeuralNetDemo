@@ -10,4 +10,36 @@ $ g++ -I. CNN.cpp cnn_demo.cpp && ./a.out
 ```
 
 ## Inner Workings
+This section describes the theoretical constructs of this CNN model. To see the steps listed with concrete values, run the program and it will fill in each layer with actual values. The overall CNN architecture is shown below:
+
 <img width="540" height="169" alt="image" src="https://github.com/user-attachments/assets/a69625c1-8ac3-4042-94cf-ad8b1bcfff6a" />
+
+Presented below is a technical, layer-by-layer walkthrough of the implemented architecture, systematically tracing each stage as depicted in the diagram:
+
+### I. Input/Preprocessing
+Scan through `canvas.txt`, constructing a matrix $\mathbf{A} \in \mathbb{R}^{9 \times 9}$ such that:
+
+$$
+A_{i,j} = \begin{cases}
+1 & \text{if pixel }i, j\text{ is filled in (represented by @)} \\
+-1 & \text{if pixel }i, j\text{ is not filled in (represented by .)}
+\end{cases}
+$$
+> [!NOTE]
+> The `@` symbol is one of the most visually dense characters available on a standard keyboard, occupying a large proportion of the character cell, whereas the `.` symbol occupies the least area. This makes them convenient choices for representing “shaded” and “unshaded” pixels in ASCII-art-based input matrices.
+
+### II. Convolution Layer
+In this step, three distinct convolutional kernels, denoted as $K^{(1)}, K^{(2)}, K^{(3)} \in \mathcal{R}^{3 \times 3}$ are applied to $A$ to extract localized spatial features. $K^{(1)}$ focuses on the diagonal from top-left to bottom-right. $K^{(2)}$ focuses on the diagonal from top-right to bottom-left. $K^{(3)}$ focuses on a central cross-shaped pattern. Generate three convolved feature maps $B^{(1)}, B^{(2)}, B^{(3)} \in \mathbb{R}^{7 \times 7}$ using the following process:
+
+$$
+B^{(n)}_{i, j} = \sum_{u=0}^2 \sum_{u=0}^2 A_{i+u,j+v} \cdot K^{(n)}_{u,v},
+$$
+
+where $n = 1, 2, 3$ and $0 \leq i, j \leq 6$.
+
+### III. Activation Layer
+The *rectified linear unit* activation function is applied to each feature map $n = 1, 2, 3$ in the following fashion:
+
+$$
+B^{(n)}_{i, j} := \text{ReLU}(B^{(n)}_{i, j}) = \max(0, B^{(n)}_{i, j}), \text{ for all } 0 \leq i, j \leq 6.
+$$
