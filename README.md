@@ -17,7 +17,7 @@ This section describes the theoretical constructs of this CNN model. To see the 
 Presented below is a technical, layer-by-layer walkthrough of the implemented architecture, systematically tracing each stage as depicted in the diagram:
 
 ### I. Input/Preprocessing
-Scan through `canvas.txt`, constructing a matrix $\mathbf{A} \in \mathbb{R}^{9 \times 9}$ such that:
+Scan through `canvas.txt`, constructing a matrix $A \in \mathbb{R}^{9 \times 9}$ such that:
 
 $$
 A_{i,j} = \begin{cases}
@@ -42,4 +42,37 @@ The *rectified linear unit* activation function is applied to each feature map $
 
 $$
 B^{(n)}_{i, j} := \text{ReLU}(B^{(n)}_{i, j}) = \max(0, B^{(n)}_{i, j}), \text{ for all } 0 \leq i, j \leq 6.
+$$
+
+### IV. Pooling Layer
+Each feature map is then downsampled to $C^{(1)}, C^{(2)}, C^{(3)} \in \mathbb{R}^{4 \times 4}$ in this layer. Using a window size of 2 and stride 2, apply the max pooling operation on each
+
+$$
+C^{(n)}_{i, j} = \max(B^{(n)}_{u, v} | u \in [2i - 1, 2i], v \in [2j - 1, 2j]).
+$$
+
+### V. Flatten Layer
+Each of the three pooled outputs is flattened and concatenated into a single vector
+
+$$
+\vec{x} = \begin{bmatrix} C^{(1)}_{0,0} & \dots & C^{(1)}_{3,3} & C^{(2)}_{0,0} & \dots & C^{(2)}_{3,3} & C^{(3)}_{0,0} & \dots & C^{(3)}_{3,3} \end{bmatrix}^\top \in \mathbb{R}^{48}.
+$$
+
+### VI. Pseudo-Dense Output Layer
+The flattened $\vec{x} \in \mathbb{R}^{48}$ is mapped to class scores as
+
+$$
+y_X = \frac{100}{13} \sum_{i \in \mathcal{I}_X} x_i,
+$$
+$$
+y_O = \frac{100}{9} \sum_{i \in \mathcal{I}_O} x_i,
+$$
+
+where $\mathcal{I}_X, \mathcal{I}_O$ correspond to neurons that are maximally activated by a “perfect” `X` or `O` drawing, respectively. By summing these selected neurons, the pseudo-dense layer effectively performs a manual aggregation based on a single canonical sample, rather than learning weights from a dataset. Lastly, the final predicted class is given by:
+
+$$
+\hat{y} = \begin{cases}
+  X & \text{if } y_X > y_O \\
+  O & \text{otherwise}
+\end{cases}
 $$
