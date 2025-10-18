@@ -22,15 +22,15 @@ namespace CNN
 
     /// <summary> Applies convolutional layer on drawing. </summary>
     ///     <param name="input"> Raw data of drawing. </param>
-    ///     <returns> 3D vector containing 3 2D vectors that represents each layer applied on each filter. </returns>
+    ///     <returns> 3D vector containing 3 2D vectors that represents each feature map applied on each filter. </returns>
     std::vector<std::vector<std::vector<double>>> convolve(const std::vector<std::vector<int>>& input);
 
      /// <summary> ReLU function Layer, removes all negative numbers and sets them to zero. </summary>
-    ///     <param name="convLayer"> Individual 2D convoluted layer. Modifies in-place. </param>
+    ///     <param name="convLayer"> Individual 2D convolved feature maps. Modifies in-place. </param>
     void ReLU(std::vector<std::vector<double>>& convLayer);
 
     /// <summary> Pooling layer shrinks the image stack into a smaller size for the feed-forward network to digest. </summary>
-    ///     <param name="convLayers"> Vector of all 2D convoluted layers. </param>
-    /// <returns> Shrunken down layers. </returns>
-    std::vector<std::vector<std::vector<double>>> pool(const std::vector<std::vector<std::vector<double>>>& convLayers);
+    ///     <param name="convLayers"> Vector of all 2D convolved feature maps. </param>
+    ///     <returns> Shrunken down feature maps. </returns>
+    std::vector<std::vector<std::vector<double>>> pool(const std::vector<std::vector<std::vector<double>>>& featureMaps);
 }
