@@ -44,7 +44,7 @@ int main()
     Util::print_2Dvector(featureMaps[2]);
 
     for (int i = 0; i < 3; ++i)
-        CNN::ReLU(featureMap[i]);
+        CNN::ReLU(featureMaps[i]);
 
     std::cout << "\nApplying ReLU activation layer...\n";
     std::cout << "\nReLU feature map 1 (7x7):\n";
