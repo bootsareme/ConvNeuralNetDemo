@@ -69,7 +69,7 @@ void CNN::ReLU(std::vector<std::vector<double>>& convLayer)
 
 std::vector<std::vector<std::vector<double>>> CNN::pool(const std::vector<std::vector<std::vector<double>>>& convLayers)
 {
-    std::vector<std::vector<std::vector<double>>> convolutedLayers;
+    std::vector<std::vector<std::vector<double>>> layers;
     std::vector<std::vector<double>> firstLayer, secondLayer, thirdLayer;
 
     // pool first layer
@@ -138,8 +138,8 @@ std::vector<std::vector<std::vector<double>>> CNN::pool(const std::vector<std::v
         std::max({ convLayers[2][5][5], convLayers[2][5][6], convLayers[2][6][5], convLayers[2][6][6] }),
     });
 
-    convolutedLayers.push_back(firstLayer);
-    convolutedLayers.push_back(secondLayer);
-    convolutedLayers.push_back(thirdLayer);
-    return convolutedLayers;
+    layers.push_back(firstLayer);
+    layers.push_back(secondLayer);
+    layers.push_back(thirdLayer);
+    return layers;
 }
