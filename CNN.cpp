@@ -63,7 +63,8 @@ void CNN::ReLU(std::vector<std::vector<double>>& convLayer)
 {
     for (int i = 0; i < 7; ++i)
         for (int j = 0; j < 7; ++j)
-            convLayer[i][j] = std::max(0, convLayer[i][j]);
+            if (convLayer[i][j] < 0)
+                convLayer[i][j] = 0;
 }
 
 std::vector<std::vector<std::vector<double>>> CNN::pool(const std::vector<std::vector<std::vector<double>>>& convLayer)

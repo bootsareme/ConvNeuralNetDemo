@@ -30,7 +30,7 @@ namespace CNN
     void ReLU(std::vector<std::vector<double>>& convLayer);
 
     /// <summary> Pooling layer shrinks the image stack into a smaller size for the feed-forward network to digest. </summary>
-    ///     <param name="convLayers"> Vector of all 2D convolved feature maps. </param>
+    ///     <param name="convLayer"> Vector of all outputs from the 2D convolution layer. </param>
     ///     <returns> Shrunken down feature maps. </returns>
-    std::vector<std::vector<std::vector<double>>> pool(const std::vector<std::vector<std::vector<double>>>& featureMaps);
+    std::vector<std::vector<std::vector<double>>> pool(const std::vector<std::vector<std::vector<double>>>& convLayer);
 }
