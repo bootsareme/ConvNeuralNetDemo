@@ -34,7 +34,7 @@ int main()
     std::cout << "\nCenterpiece (3x3):\n";
     Util::print_2Dvector(CNN::filterCenter);
     
-    std::cout << "\nConvoluting each layer using filters...\n";
+    std::cout << "\nConvolving each layer using filters...\n";
     std::vector<std::vector<std::vector<double>>> convolvedLayers = CNN::convolve(drawing);
     std::cout << "\nConvolved Layer 1 (7x7):\n";
     Util::print_2Dvector(convolvedLayers[0]);
