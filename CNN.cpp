@@ -5,8 +5,8 @@
 
 std::vector<std::vector<std::vector<double>>> CNN::convolve(const std::vector<std::vector<int>>& input)
 {
-    std::vector<std::vector<std::vector<double>>> convolvedLayers;
-    std::vector<std::vector<double>> firstLayer, secondLayer, thirdLayer;
+    std::vector<std::vector<std::vector<double>>> convolvedFeatureMaps;
+    std::vector<std::vector<double>> map1, map2, map3;
 
     // apply first filter
     for (int i = 1; i < 8; ++i)
@@ -20,7 +20,7 @@ std::vector<std::vector<std::vector<double>>> CNN::convolve(const std::vector<st
             const double dotProd3 = input[i + 1][j - 1] * filterDiagonal1[2][0] + input[i + 1][j] * filterDiagonal1[2][1] + input[i + 1][j + 1] * filterDiagonal1[2][2];
             row.push_back((dotProd1 + dotProd2 + dotProd3) / 9);
         }
-        firstLayer.push_back(row);
+        map1.push_back(row);
     }
 
     // apply second filter
@@ -35,7 +35,7 @@ std::vector<std::vector<std::vector<double>>> CNN::convolve(const std::vector<st
             const double dotProd3 = input[i + 1][j - 1] * filterDiagonal2[2][0] + input[i + 1][j] * filterDiagonal2[2][1] + input[i + 1][j + 1] * filterDiagonal2[2][2];
             row.push_back((dotProd1 + dotProd2 + dotProd3) / 9);
         }
-        secondLayer.push_back(row);
+        map2.push_back(row);
     }
 
     // apply third filter
@@ -50,41 +50,38 @@ std::vector<std::vector<std::vector<double>>> CNN::convolve(const std::vector<st
             const double dotProd3 = input[i + 1][j - 1] * filterCenter[2][0] + input[i + 1][j] * filterCenter[2][1] + input[i + 1][j + 1] * filterCenter[2][2];
             row.push_back((dotProd1 + dotProd2 + dotProd3) / 9);
         }
-        thirdLayer.push_back(row);
+        map3.push_back(row);
     }
 
-    convolvedLayers.push_back(firstLayer);
-    convolvedLayers.push_back(secondLayer);
-    convolvedLayers.push_back(thirdLayer);
-    return convolvedLayers;
+    convolvedFeatureMaps.push_back(map1);
+    convolvedFeatureMaps.push_back(map2);
+    convolvedFeatureMaps.push_back(map3);
+    return convolvedFeatureMaps;
 }
 
 void CNN::ReLU(std::vector<std::vector<double>>& convLayer)
 {
     for (int i = 0; i < 7; ++i)
         for (int j = 0; j < 7; ++j)
-            if (convLayer[i][j] < 0)
-                convLayer[i][j] = 0;
+            convLayer[i][j] = std::max(0, convLayer[i][j]);
 }
 
-std::vector<std::vector<std::vector<double>>> CNN::pool(const std::vector<std::vector<std::vector<double>>>& convLayers)
+std::vector<std::vector<std::vector<double>>> CNN::pool(const std::vector<std::vector<std::vector<double>>>& convLayer)
 {
-    std::vector<std::vector<std::vector<double>>> layers;
-    std::vector<std::vector<double>> firstLayer, secondLayer, thirdLayer;
+    std::vector<std::vector<std::vector<double>>> featureMaps;
+    std::vector<std::vector<double>> map1, map2, map3;
 
     // pool first layer
     for (int i = 0; i < 6; i += 2)
     {
         // stride size of 2
         std::vector<double> row;
-        for (int j = 0; j < 6; j += 2)
-        {
-            // pooling by taking highest value in 2x2 window
-            row.emplace_back(std::max({ convLayers[0][i][j], convLayers[0][i][j + 1], convLayers[0][i + 1][j], convLayers[0][i + 1][j + 1] }));
-        }
+        for (int j = 0; j < 6; j += 2) // pooling by taking highest value in 2x2 window
+            row.emplace_back(std::max({ convLayer[0][i][j], convLayer[0][i][j + 1], convLayer[0][i + 1][j], convLayer[0][i + 1][j + 1] }));
+        
         // account for the fact that a 2x2 window cannot scan a 7x7 with stride-size 2 evenly
-        row.emplace_back(std::max({ convLayers[0][i][5], convLayers[0][i][6], convLayers[0][i + 1][5], convLayers[0][i + 1][6] }));
-        firstLayer.emplace_back(row);
+        row.emplace_back(std::max({ convLayer[0][i][5], convLayer[0][i][6], convLayer[0][i + 1][5], convLayer[0][i + 1][6] }));
+        map1.emplace_back(row);
     }
 
     // pool second layer
@@ -92,14 +89,12 @@ std::vector<std::vector<std::vector<double>>> CNN::pool(const std::vector<std::v
     {
         // stride size of 2
         std::vector<double> row;
-        for (int j = 0; j < 6; j += 2)
-        {
-            // pooling by taking highest value in 2x2 window
-            row.emplace_back(std::max({ convLayers[1][i][j], convLayers[1][i][j + 1], convLayers[1][i + 1][j], convLayers[1][i + 1][j + 1] }));
-        }
+        for (int j = 0; j < 6; j += 2) // pooling by taking highest value in 2x2 window
+            row.emplace_back(std::max({ convLayer[1][i][j], convLayer[1][i][j + 1], convLayer[1][i + 1][j], convLayer[1][i + 1][j + 1] }));
+        
         // account for the fact that a 2x2 window cannot scan a 7x7 with stride-size 2 evenly
-        row.emplace_back(std::max({ convLayers[1][i][5], convLayers[1][i][6], convLayers[1][i + 1][5], convLayers[1][i + 1][6] }));
-        secondLayer.emplace_back(row);
+        row.emplace_back(std::max({ convLayer[1][i][5], convLayer[1][i][6], convLayer[1][i + 1][5], convLayer[1][i + 1][6] }));
+        map2.emplace_back(row);
     }
 
     // pool third layer
@@ -107,39 +102,37 @@ std::vector<std::vector<std::vector<double>>> CNN::pool(const std::vector<std::v
     {
         // stride size of 2
         std::vector<double> row;
-        for (int j = 0; j < 6; j += 2)
-        {
-            // pooling by taking highest value in 2x2 window
-            row.emplace_back(std::max({ convLayers[2][i][j], convLayers[2][i][j + 1], convLayers[2][i + 1][j], convLayers[2][i + 1][j + 1] }));
-        }
+        for (int j = 0; j < 6; j += 2) // pooling by taking highest value in 2x2 window
+            row.emplace_back(std::max({ convLayer[2][i][j], convLayer[2][i][j + 1], convLayer[2][i + 1][j], convLayer[2][i + 1][j + 1] }));
+        
         // account for the fact that a 2x2 window cannot scan a 7x7 with stride-size 2 evenly
-        row.emplace_back(std::max({ convLayers[2][i][5], convLayers[2][i][6], convLayers[2][i + 1][5], convLayers[2][i + 1][6] }));
-        thirdLayer.emplace_back(row);
+        row.emplace_back(std::max({ convLayer[2][i][5], convLayer[2][i][6], convLayer[2][i + 1][5], convLayer[2][i + 1][6] }));
+        map3.emplace_back(row);
     }
 
-    firstLayer.push_back(std::vector<double>{
-        std::max({ convLayers[0][5][0], convLayers[0][5][1], convLayers[0][6][0], convLayers[0][6][1] }),
-        std::max({ convLayers[0][5][2], convLayers[0][5][3], convLayers[0][6][2], convLayers[0][6][3] }),
-        std::max({ convLayers[0][5][4], convLayers[0][5][5], convLayers[0][6][4], convLayers[0][6][5] }),
-        std::max({ convLayers[0][5][5], convLayers[0][5][6], convLayers[0][6][5], convLayers[0][6][6] }),
+    map1.push_back(std::vector<double>{
+        std::max({ convLayer[0][5][0], convLayer[0][5][1], convLayer[0][6][0], convLayer[0][6][1] }),
+        std::max({ convLayer[0][5][2], convLayer[0][5][3], convLayer[0][6][2], convLayer[0][6][3] }),
+        std::max({ convLayer[0][5][4], convLayer[0][5][5], convLayer[0][6][4], convLayer[0][6][5] }),
+        std::max({ convLayer[0][5][5], convLayer[0][5][6], convLayer[0][6][5], convLayer[0][6][6] }),
     });
 
-    secondLayer.push_back(std::vector<double>{
-        std::max({ convLayers[1][5][0], convLayers[1][5][1], convLayers[1][6][0], convLayers[1][6][1] }),
-        std::max({ convLayers[1][5][2], convLayers[1][5][3], convLayers[1][6][2], convLayers[1][6][3] }),
-        std::max({ convLayers[1][5][4], convLayers[1][5][5], convLayers[1][6][4], convLayers[1][6][5] }),
-        std::max({ convLayers[1][5][5], convLayers[1][5][6], convLayers[1][6][5], convLayers[1][6][6] }),
+    map2.push_back(std::vector<double>{
+        std::max({ convLayer[1][5][0], convLayer[1][5][1], convLayer[1][6][0], convLayer[1][6][1] }),
+        std::max({ convLayer[1][5][2], convLayer[1][5][3], convLayer[1][6][2], convLayer[1][6][3] }),
+        std::max({ convLayer[1][5][4], convLayer[1][5][5], convLayer[1][6][4], convLayer[1][6][5] }),
+        std::max({ convLayer[1][5][5], convLayer[1][5][6], convLayer[1][6][5], convLayer[1][6][6] }),
     });
 
-    thirdLayer.push_back(std::vector<double>{
-        std::max({ convLayers[2][5][0], convLayers[2][5][1], convLayers[2][6][0], convLayers[2][6][1] }),
-        std::max({ convLayers[2][5][2], convLayers[2][5][3], convLayers[2][6][2], convLayers[2][6][3] }),
-        std::max({ convLayers[2][5][4], convLayers[2][5][5], convLayers[2][6][4], convLayers[2][6][5] }),
-        std::max({ convLayers[2][5][5], convLayers[2][5][6], convLayers[2][6][5], convLayers[2][6][6] }),
+    map3.push_back(std::vector<double>{
+        std::max({ convLayer[2][5][0], convLayer[2][5][1], convLayer[2][6][0], convLayer[2][6][1] }),
+        std::max({ convLayer[2][5][2], convLayer[2][5][3], convLayer[2][6][2], convLayer[2][6][3] }),
+        std::max({ convLayer[2][5][4], convLayer[2][5][5], convLayer[2][6][4], convLayer[2][6][5] }),
+        std::max({ convLayer[2][5][5], convLayer[2][5][6], convLayer[2][6][5], convLayer[2][6][6] }),
     });
 
-    layers.push_back(firstLayer);
-    layers.push_back(secondLayer);
-    layers.push_back(thirdLayer);
-    return layers;
+    featureMaps.push_back(map1);
+    featureMaps.push_back(map2);
+    featureMaps.push_back(map3);
+    return featureMaps;
 }
