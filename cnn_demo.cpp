@@ -5,7 +5,7 @@
  * DATE: 2022-1-7
  * PURPOSE: To demonstrate the internal workings of a CNN as many modern libraries abstract away fundamental concepts.
  * GOAL: Build a convolutional network to recognize whether a 9x9 pixelated black-and-white image contains a drawing of a "X" or "O".
- * NOTE: This CNN works as intended if drawings are close to the center of the canvas. Because it does not go through generational epochs, the accuracy of this CNN is still very low as the training set is only based on 1 perfect drawing of 'X' or 'O'. It is designed to demonstrate the inner-workings of a CNN, not serve as scalable, optimized algorithm.
+ * NOTE: This CNN works as intended if drawings are close to the center of the canvas. Because it does not go through backpropagation, the accuracy of this CNN is still fairly low as the training set is only based on 1 perfect drawing of 'X' or 'O'. It is designed to demonstrate the inner-workings of a CNN and not serve as scalable, optimized algorithm.
  */
 
 #include <iostream>
@@ -34,41 +34,41 @@ int main()
     std::cout << "\nCenterpiece (3x3):\n";
     Util::print_2Dvector(CNN::filterCenter);
     
-    std::cout << "\nConvolving each layer using filters...\n";
-    std::vector<std::vector<std::vector<double>>> convolvedLayers = CNN::convolve(drawing);
-    std::cout << "\nConvolved Layer 1 (7x7):\n";
-    Util::print_2Dvector(convolvedLayers[0]);
-    std::cout << "\nConvolved Layer 2 (7x7):\n";
-    Util::print_2Dvector(convolvedLayers[1]);
-    std::cout << "\nConvolved Layer 3 (7x7):\n";
-    Util::print_2Dvector(convolvedLayers[2]);
+    std::cout << "\nConvolving original input using filters...\n";
+    std::vector<std::vector<std::vector<double>>> featureMaps = CNN::convolve(drawing);
+    std::cout << "\nConvolved feature map 1 (7x7):\n";
+    Util::print_2Dvector(featureMaps[0]);
+    std::cout << "\nConvolved feature map 2 (7x7):\n";
+    Util::print_2Dvector(featureMaps[1]);
+    std::cout << "\nConvolved feature map 3 (7x7):\n";
+    Util::print_2Dvector(featureMaps[2]);
 
     for (int i = 0; i < 3; ++i)
-        CNN::ReLU(convolvedLayers[i]);
+        CNN::ReLU(featureMap[i]);
 
     std::cout << "\nApplying ReLU activation layer...\n";
-    std::cout << "\nReLU Layer 1 (7x7):\n";
-    Util::print_2Dvector(convolvedLayers[0]);
-    std::cout << "\nReLU Layer 2 (7x7):\n";
-    Util::print_2Dvector(convolvedLayers[1]);
-    std::cout << "\nReLU Layer 3 (7x7):\n";
-    Util::print_2Dvector(convolvedLayers[2]);
+    std::cout << "\nReLU feature map 1 (7x7):\n";
+    Util::print_2Dvector(featureMaps[0]);
+    std::cout << "\nReLU feature map 2 (7x7):\n";
+    Util::print_2Dvector(featureMaps[1]);
+    std::cout << "\nReLU feature map 3 (7x7):\n";
+    Util::print_2Dvector(featureMaps[2]);
     
-    std::cout << "\nPooling layers with window size 2 and stride size 2...\n";
-    const std::vector<std::vector<std::vector<double>>> pooledLayers = CNN::pool(convolvedLayers);
+    std::cout << "\nPooling layers with window size = 2 and stride size = 2...\n";
+    const std::vector<std::vector<std::vector<double>>> pooledLayer = CNN::pool(featureMaps);
     std::cout << "\nReLU Layer 1 with Pooling (4x4):\n";
-    Util::print_2Dvector(pooledLayers[0]);
+    Util::print_2Dvector(pooledLayer[0]);
     std::cout << "\nReLU Layer 2 with Pooling (4x4):\n";
-    Util::print_2Dvector(pooledLayers[1]);
+    Util::print_2Dvector(pooledLayer[1]);
     std::cout << "\nReLU Layer 3 with Pooling (4x4):\n";
-    Util::print_2Dvector(pooledLayers[2]);
+    Util::print_2Dvector(pooledLayer[2]);
     
-    std::cout << "\nConverting 3 layers into 1 layer...\n";
+    std::cout << "\nFlattening into 1 layer...\n";
     std::cout << "\nFeed-forward network layer (1x48):\n";
     std::vector<double> singleLayer;
 
-    for (const auto& layer : pooledLayers)
-        for (const auto& vector : layer)
+    for (const auto& featureMap : pooledLayer)
+        for (const auto& vector : featureMap)
             for (auto value : vector)
                 singleLayer.push_back(value);
 
