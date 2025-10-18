@@ -6,8 +6,7 @@ Originally created in early 2022, this project aims to demonstrate the internal 
 ## Usage
 The easiest way to see this demo in action is to deploy on a *nix-like OS (such as directly using GitHub Codespaces). Run the following command in the root of this repository to get some output:
 ```
-$ g++ -I. CNN.cpp cnn_demo.cpp
-$ ./a.out
+$ g++ -I. CNN.cpp cnn_demo.cpp && ./a.out
 ```
 
 ## Inner Workings
